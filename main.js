@@ -1,3 +1,5 @@
+console.log(process.platform);
+
 // app模块 控制应用程序的事件生命周期
 // BrowserWindow模块 创建和管理应用程序 窗口
 const { app, BrowserWindow } = require('electron');
@@ -6,8 +8,8 @@ const path = require('path');
 // 将index.html加载进一个新的BrowserWindow实例
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+    width: 800,
+    height: 600,
     // 将脚本附加到渲染器
     webPreferences: {
       // __dirname 指向当前正在执行脚本的路径
@@ -15,7 +17,8 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
-
+  // 打开调试工具
+  win.webContents.openDevTools();
   win.loadFile('index.html');
 };
 

@@ -17,7 +17,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
-  // handle 监听器
+  // 为了网页向主进程发送消息 设置一个主进程处理程序 handle 监听器
   ipcMain.handle('ping', () => 'pong');
   ipcMain.handle('hello', () => 'hi');
   // 打开调试工具

@@ -2,7 +2,7 @@ console.log(process.platform);
 
 // app模块 控制应用程序的事件生命周期
 // BrowserWindow模块 创建和管理应用程序 窗口
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 // 将index.html加载进一个新的BrowserWindow实例
@@ -17,6 +17,9 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+  // handle 监听器
+  ipcMain.handle('ping', () => 'pong');
+  ipcMain.handle('hello', () => 'hi');
   // 打开调试工具
   win.webContents.openDevTools();
   win.loadFile('index.html');

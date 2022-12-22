@@ -17,12 +17,19 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  ipcMain.on('set-title', (event, title) => {
+    const webContents = event.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    win.setTitle(title);
+  });
   // 为了网页向主进程发送消息 设置一个主进程处理程序 handle 监听器
   ipcMain.handle('ping', () => 'pong');
   ipcMain.handle('hello', () => 'hi');
+  ipcMain.handle('name', () => '卞壮');
   // 打开调试工具
   win.webContents.openDevTools();
-  win.loadFile('index.html'); 
+  win.loadFile('index.html');
 };
 
 // 调用createWindow()函数来打开您的窗口

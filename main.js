@@ -10,7 +10,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
-    // 将脚本附加到渲染器
+    // 将预处理脚本附加到渲染器
     webPreferences: {
       // __dirname 指向当前正在执行脚本的路径
       // path.join 将多个路径联结在一起，创建一个跨平台的路径字符串
@@ -22,7 +22,7 @@ const createWindow = () => {
   ipcMain.handle('hello', () => 'hi');
   // 打开调试工具
   win.webContents.openDevTools();
-  win.loadFile('index.html');
+  win.loadFile('index.html'); 
 };
 
 // 调用createWindow()函数来打开您的窗口

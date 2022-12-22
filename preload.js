@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('even', {
   // 触发主进程的程序
   ping: () => ipcRenderer.invoke('ping'),
-  hello: () => ipcRenderer.invoke('hello'),
+  hello: (num) => ipcRenderer.invoke('hello', num),
   name: () => ipcRenderer.invoke('name'),
 });
 

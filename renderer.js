@@ -28,7 +28,7 @@ const getInfo = async () => {
 getInfo();
 
 const fun = async () => {
-  const response = await even.hello();
+  const response = await even.hello(666);
   console.log(response); // 打印
 };
 

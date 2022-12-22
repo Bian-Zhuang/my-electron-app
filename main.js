@@ -5,6 +5,13 @@ console.log(process.platform);
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
+// 设置标题
+const handleSetTitle = (event, title) => {
+  const webContents = event.sender;
+  const win = BrowserWindow.fromWebContents(webContents);
+  win.setTitle(title);
+};
+
 // 将index.html加载进一个新的BrowserWindow实例
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -18,14 +25,12 @@ const createWindow = () => {
     },
   });
 
-  ipcMain.on('set-title', (event, title) => {
-    const webContents = event.sender;
-    const win = BrowserWindow.fromWebContents(webContents);
-    win.setTitle(title);
-  });
+  // 设置一个修改标题的 IPC 监听器:
+  ipcMain.on('set-title', handleSetTitle);
+
   // 为了网页向主进程发送消息 设置一个主进程处理程序 handle 监听器
   ipcMain.handle('ping', () => 'pong');
-  ipcMain.handle('hello', () => 'hi');
+  ipcMain.handle('hello', (event, num) => num);
   ipcMain.handle('name', () => '卞壮');
   // 打开调试工具
   win.webContents.openDevTools();

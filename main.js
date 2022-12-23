@@ -2,7 +2,7 @@ console.log(process.platform);
 
 // app模块 控制应用程序的事件生命周期
 // BrowserWindow模块 创建和管理应用程序 窗口
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 
 // 设置标题
@@ -10,6 +10,16 @@ const handleSetTitle = (event, title) => {
   const webContents = event.sender;
   const win = BrowserWindow.fromWebContents(webContents);
   win.setTitle(title);
+};
+
+// 文件对话框
+const handleFileOpen = async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog();
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
 };
 
 // 将index.html加载进一个新的BrowserWindow实例
@@ -25,6 +35,17 @@ const createWindow = () => {
     },
   });
 
+  // 双向通信
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    console.log(arg); // 在 Node 控制台中打印“ping”
+    // 作用如同 `send`，但返回一个消息
+    // 到发送原始消息的渲染器
+    event.reply('asynchronous-reply', 'pong');
+  });
+
+  // 文件对话框 返回路径
+  ipcMain.handle('dialog:openFile', handleFileOpen);
+
   // 设置一个修改标题的 IPC 监听器:
   ipcMain.on('set-title', handleSetTitle);
 
@@ -34,7 +55,8 @@ const createWindow = () => {
   ipcMain.handle('name', () => '卞壮');
   // 打开调试工具
   win.webContents.openDevTools();
-  win.loadFile('index.html');
+  // win.loadFile('index.html');
+  win.loadURL('http://localhost:8000/');
 };
 
 // 调用createWindow()函数来打开您的窗口

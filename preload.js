@@ -20,4 +20,11 @@ contextBridge.exposeInMainWorld('myAPI', {
 
 contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (title) => ipcRenderer.send('set-title', title),
+  openFile: () => ipcRenderer.invoke('dialog:openFile'),
 });
+
+// 双向通信
+ipcRenderer.on('asynchronous-reply', (_event, arg) => {
+  console.log(arg); // 在 DevTools 控制台中打印“pong”
+});
+ipcRenderer.send('asynchronous-message', 'ping');

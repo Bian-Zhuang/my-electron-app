@@ -2,7 +2,7 @@ console.log(process.platform);
 
 // app模块 控制应用程序的事件生命周期
 // BrowserWindow模块 创建和管理应用程序 窗口
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const path = require('path');
 
 // 设置标题
@@ -34,6 +34,30 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+  const menu = Menu.buildFromTemplate([
+    {
+      label: app.name,
+      submenu: [
+        {
+          click: () => win.webContents.send('update-counter', 1),
+          label: 'Increment',
+        },
+        {
+          click: () => win.webContents.send('update-counter', -1),
+          label: 'Decrement',
+        },
+      ],
+    },
+    {
+      label: '自定义菜单',
+    },
+  ]);
+
+  Menu.setApplicationMenu(menu);
+
+  ipcMain.on('counter-value', (_event, value) => {
+    console.log(value); // 将打印到 Node 控制台
+  });
 
   // 双向通信
   ipcMain.on('asynchronous-message', (event, arg) => {
@@ -41,6 +65,11 @@ const createWindow = () => {
     // 作用如同 `send`，但返回一个消息
     // 到发送原始消息的渲染器
     event.reply('asynchronous-reply', 'pong');
+  });
+
+  ipcMain.on('synchronous-message', (event, arg) => {
+    console.log(arg); // 在 Node 控制台中打印“ping”
+    event.returnValue = 'pong';
   });
 
   // 文件对话框 返回路径
@@ -55,8 +84,8 @@ const createWindow = () => {
   ipcMain.handle('name', () => '卞壮');
   // 打开调试工具
   win.webContents.openDevTools();
-  // win.loadFile('index.html');
-  win.loadURL('http://localhost:8000/');
+  win.loadFile('index.html');
+  // win.loadURL('http://localhost:8000/');
 };
 
 // 调用createWindow()函数来打开您的窗口
